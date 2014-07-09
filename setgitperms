@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for file in \
+	/usr/share/git/contrib/hooks/setgitperms.perl \
+	/usr/share/git-core/contrib/hooks/setgitperms.perl \
+	;
+do
+	[[ -x $file ]] && exec ${file} "$@"
+done
