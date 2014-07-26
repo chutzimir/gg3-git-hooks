@@ -6,4 +6,5 @@ for file in \
 	;
 do
 	[[ -x $file ]] && exec ${file} "$@"
+	[[ -f $file ]] && exec perl ${file} "$@"
 done
