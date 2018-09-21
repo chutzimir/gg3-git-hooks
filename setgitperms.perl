@@ -59,7 +59,7 @@ if ($write_mode) {
     open (IN, "<$gitmeta") or die "Could not open $gitmeta for reading: $!\n";
     while (defined ($_ = <IN>)) {
 	chomp;
-	if (/^(.*)  mode=(\S+)\s+uid=(\d+)\s+gid=(\d+)/) {
+	if (/^(.*)  mode=(\S+)(?:\s+uid=(\d+)\s+gid=(\d+))?/) {
 	    # Compare recorded perms to actual perms in the working dir
 	    my ($path, $mode, $uid, $gid) = ($1, $2, $3, $4);
 	    my $fullpath = $topdir . $path;
@@ -68,22 +68,6 @@ if ($write_mode) {
 	    if ($mode ne $wmode) {
 		$verbose && print "Updating permissions on $path: old=$wmode, new=$mode\n";
 		chmod oct($mode), $fullpath;
-	    }
-	    if ($uid != $wuid || $gid != $wgid) {
-		if ($verbose) {
-		    # Print out user/group names instead of uid/gid
-		    my $pwname  = getpwuid($uid);
-		    my $grpname  = getgrgid($gid);
-		    my $wpwname  = getpwuid($wuid);
-		    my $wgrpname  = getgrgid($wgid);
-		    $pwname = $uid if !defined $pwname;
-		    $grpname = $gid if !defined $grpname;
-		    $wpwname = $wuid if !defined $wpwname;
-		    $wgrpname = $wgid if !defined $wgrpname;
-
-		    print "Updating uid/gid on $path: old=$wpwname/$wgrpname, new=$pwname/$grpname\n";
-		}
-		chown $uid, $gid, $fullpath;
 	    }
 	}
 	else {
@@ -131,12 +115,11 @@ elsif ($read_mode) {
 	    foreach my $file (@conflict_files) {
 		my $absfile = $topdir . $file;
 		my $gm_entry = `grep "^$file  mode=" $gitmeta`;
-		if ($gm_entry =~ /mode=(\d+)  uid=(\d+)  gid=(\d+)/) {
+		if ($gm_entry =~ /mode=(\d+)(?:  uid=(\d+)  gid=(\d+))?/) {
 		    my ($gm_mode, $gm_uid, $gm_gid) = ($1, $2, $3);
 		    my (undef,undef,$mode,undef,$uid,$gid) = lstat("$absfile");
 		    $mode = sprintf("%04o", $mode & 07777);
-		    if (($gm_mode ne $mode) || ($gm_uid != $uid)
-			|| ($gm_gid != $gid)) {
+		    if (($gm_mode ne $mode)) {
 			print "PERMISSIONS/OWNERSHIP CONFLICT\n";
 			print "    Mismatch found for file: $file\n";
 			print "    Run `.git/hooks/setgitperms.perl --write` to reconcile.\n";
@@ -205,10 +188,10 @@ sub printstats {
     $path =~ s/%/\%/g;
     if ($stdout) {
 	print $path;
-	printf "  mode=%04o  uid=$uid  gid=$gid\n", $mode & 07777;
+	printf "  mode=%04o\n", $mode & 07777;
     }
     else {
 	print OUT $path;
-	printf OUT "  mode=%04o  uid=$uid  gid=$gid\n", $mode & 07777;
+	printf OUT "  mode=%04o\n", $mode & 07777;
     }
 }

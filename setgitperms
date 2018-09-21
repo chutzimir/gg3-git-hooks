@@ -1,10 +1,10 @@
 #!/bin/bash
 
 for file in \
+	"${0%/*}/setgitperms.perl" \
 	/usr/share/git/contrib/hooks/setgitperms.perl \
 	/usr/share/git-core/contrib/hooks/setgitperms.perl \
 	/usr/share/doc/git/contrib/hooks/setgitperms.perl \
-	"${0%/*}/setgitperms.perl" \
 	https://raw.githubusercontent.com/git/git/master/contrib/hooks/setgitperms.perl \
 	;
 do
