@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ $(realpath .git/hooks) == $(realpath ${0%/*}) ]]; then
-	echo "This is already installed at $(realpath .git)/hooks"
-	exit 1
+	exit 0
 fi
 
 if [[ -d .git ]]; then
