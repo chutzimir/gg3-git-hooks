@@ -1,13 +1,28 @@
 #!/usr/bin/env bash
 
-if [[ -x hooks/${0##*/} ]]; then
-	if [[ -d .git ]]; then
-		if [[ ! -L .git/hooks ]]; then
-			if find .git/hooks -mindepth 1 -not -name "*.sample" | grep -q .; then
-				exit 0
-			fi
-			rm -rv .git/hooks
-			ln -sfnv ../../hooks .git/hooks
+if [[ $(realpath .git/hooks) == $(realpath ${0%/*}) ]]; then
+	echo "This is already installed at $(realpath .git)/hooks"
+	exit 1
+fi
+
+if [[ -d .git ]]; then
+	if [[ -d .git/hooks ]]; then
+		if find .git/hooks -mindepth 1 -not -name "*.sample" | grep -q .; then
+			echo "$(realpath .git/hooks) is not empty. Clean it up to succeed."
+			exit 2
 		fi
+		rm -rv .git/hooks
 	fi
+
+	if [[ -L .git/hooks ]]; then
+		echo "$(realpath .git/hooks) is still there, probably a broken link. Clean it up to succeed."
+		exit 3
+	fi
+
+	if [[ -e .git/hooks ]]; then
+		echo "$(realpath .git/hooks) is still there. This is unexpected. Carefully clean it up to succeed."
+		exit 4
+	fi
+
+	ln -sfnv $(realpath --relative-to .git/ ${0%/*}) .git/hooks
 fi
