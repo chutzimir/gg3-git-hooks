@@ -14,12 +14,12 @@ if [[ -d .git ]]; then
 	fi
 
 	if [[ -L .git/hooks ]]; then
-		echo "$(realpath .git/hooks) is still there, probably a broken link. Clean it up to succeed."
+		echo ".git/hooks is a link, will not touch it. Clean it up to succeed."
 		exit 3
 	fi
 
 	if [[ -e .git/hooks ]]; then
-		echo "$(realpath .git/hooks) is still there. This is unexpected. Carefully clean it up to succeed."
+		echo ".git/hooks is still there. This is unexpected. Carefully clean it up to succeed."
 		exit 4
 	fi
 
