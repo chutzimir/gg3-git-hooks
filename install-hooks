@@ -7,19 +7,19 @@ fi
 if [[ -d .git ]]; then
 	if [[ -d .git/hooks ]]; then
 		if find .git/hooks -mindepth 1 -not -name "*.sample" | grep -q .; then
-			echo "$(realpath .git/hooks) is not empty. Clean it up to succeed."
+			echo "$(realpath $(realpath .git)/hooks) is not empty. Clean it up to succeed."
 			exit 2
 		fi
 		rm -rv .git/hooks
 	fi
 
 	if [[ -L .git/hooks ]]; then
-		echo ".git/hooks is a link, will not touch it. Clean it up to succeed."
+		echo "$(realpath .git)/hooks is a link, will not touch it. Clean it up to succeed."
 		exit 3
 	fi
 
 	if [[ -e .git/hooks ]]; then
-		echo ".git/hooks is still there. This is unexpected. Carefully clean it up to succeed."
+		echo "$(realpath .git)/hooks is still there. This is unexpected. Carefully clean it up to succeed."
 		exit 4
 	fi
 
