@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [[ -x hooks/${0##*/} ]]; then
+	if [[ -d .git ]]; then
+		if [[ ! -L .git/hooks ]]; then
+			if find .git/hooks -mindepth 1 -not -name "*.sample" | grep -q .; then
+				exit 0
+			fi
+			rm -rv .git/hooks
+			ln -sfnv ../../hooks .git/hooks
+		fi
+	fi
+fi
