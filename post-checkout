@@ -1,1 +1,3 @@
-post-merge
+#!/bin/sh
+SUBDIRECTORY_OK=1 . "$(git --exec-path)"/git-sh-setup
+$GIT_DIR/hooks/setgitperms -w
