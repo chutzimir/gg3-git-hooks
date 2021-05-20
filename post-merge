@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 SUBDIRECTORY_OK=1 . "$(git --exec-path)"/git-sh-setup
 if [[ -z $MSYSTEM ]]; then
 $GIT_DIR/hooks/setgitperms -w
